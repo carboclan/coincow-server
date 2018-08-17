@@ -1,8 +1,8 @@
 
 module.exports = function(sequelize, DataTypes) {
-  return sequelize.define('userInfo', {
-    address: {
-      type: DataTypes.STRING(42),
+  return sequelize.define('farm', {
+    id: {
+      type: DataTypes.INTEGER,
       allowNull: false,
       primaryKey: true
     },
@@ -15,12 +15,12 @@ module.exports = function(sequelize, DataTypes) {
       allowNull: false,
       field: 'name_hex'
     },
-    avatar: {
-      type: DataTypes.STRING(256),
-      allowNull: true
+    owner: {
+      type: DataTypes.STRING(42),
+      allowNull: false
     }
   }, {
     timestamps: false,
-    tableName: 'user_info'
+    tableName: 'farm'
   });
 };
