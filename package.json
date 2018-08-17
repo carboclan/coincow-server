@@ -1,0 +1,22 @@
+{
+  "name": "coincow-server",
+  "version": "0.0.1",
+  "description": "coincow server",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/carboclan/coincow-server.git"
+  },
+  "author": "Tal",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/carboclan/coincow-server/issues"
+  },
+  "homepage": "https://github.com/carboclan/coincow-server#readme",
+  "dependencies": {
+    "web3-stream": "0.0.2"
+  }
+}
