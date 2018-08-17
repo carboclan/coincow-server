@@ -69,4 +69,11 @@ const db = require('./db');
       });
     }));
 
+  const f = await db.models.farm.count({
+    attributes: ['id', 'name', 'owner'],
+    include: [db.models.userFarm],
+    group: ['userFarms.farm_id']
+  });
+
+  console.log(f);
 })().catch(console.error);

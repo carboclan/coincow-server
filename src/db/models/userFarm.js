@@ -4,7 +4,8 @@ module.exports = function(sequelize, DataTypes) {
     userAddress: {
       type: DataTypes.STRING(42),
       allowNull: false,
-      primaryKey: true
+      primaryKey: true,
+      field: 'user_address'
     },
     farmId: {
       type: DataTypes.INTEGER,

@@ -18,6 +18,9 @@ module.exports = {
   models: _.fromPairs(models),
   async init() {
     if (!ready) {
+      const { farm, userFarm } = this.models;
+      farm.hasMany(userFarm, { foreignKey: 'farm_id' });
+
       await sequelize.authenticate();
       await sequelize.sync();
       ready = true;
