@@ -18,6 +18,11 @@ module.exports = function(sequelize, DataTypes) {
       type: DataTypes.DOUBLE,
       allowNull: true
     },
+    auctionTs: {
+      type: DataTypes.DATE,
+      allowNull: true,
+      field: 'auction_ts'
+    },
     contractSize: {
       type: DataTypes.BIGINT,
       allowNull: true,

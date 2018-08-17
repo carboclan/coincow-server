@@ -3,6 +3,7 @@ const cs = require('co-stream');
 const { Web3EventStream } = require('web3-stream');
 const { web3, contracts } = require('./eth');
 const db = require('./db');
+const { Op } = db.sequelize;
 
 (async () => {
   await db.init();
@@ -81,7 +82,7 @@ const db = require('./db');
         {
           where: {
             id: tokenId.toNumber(),
-            owner: { [db.sequelize.Op.eq]: null }
+            owner: { [Op.eq]: null }
           }
         }
       );
@@ -97,6 +98,54 @@ const db = require('./db');
       if (to !== contracts.auctionHouse.address)
         await db.models.cow.upsert({ id: tokenId.toNumber(), owner: to });
     }));
+
+  evtStream(contracts.auctionHouse.AuctionCreated)
+    .pipe(cs.object.each(async evt => {
+      const { blockNumber, args } = evt;
+      const { tokenId, price, ts } = args;
+
+      updateBlockNumber(blockNumber);
+
+      const auctionTs = new Date(ts.toNumber() * 1000);
+      await db.models.cow.update(
+        { price: web3.fromWei(price), auctionTs },
+        {
+          where: {
+            id: tokenId.toNumber(),
+            auctionTs: {
+              [Op.or]: {
+                [Op.eq]: null,
+                [Op.lt]: auctionTs
+              }
+            }
+          }
+        });
+    }));
+
+  for (const event of [contracts.auctionHouse.AuctionSuccessful, contracts.auctionHouse.AuctionCancelled]) {
+    evtStream(event)
+      .pipe(cs.object.each(async evt => {
+        const { blockNumber, args } = evt;
+        const { tokenId, ts } = args;
+
+        updateBlockNumber(blockNumber);
+
+        const auctionTs = new Date(ts.toNumber() * 1000);
+        await db.models.cow.update(
+          { price: null, auctionTs },
+          {
+            where: {
+              id: tokenId.toNumber(),
+              auctionTs: {
+                [Op.or]: {
+                  [Op.eq]: null,
+                  [Op.lt]: auctionTs
+                }
+              }
+            }
+          });
+      }));
+  }
 
   for (const cowContract of [contracts.ethSwapCow, contracts.btcSwapCow]) {
     const contractUnit = await cowContract.contractUnit();
