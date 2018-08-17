@@ -69,10 +69,63 @@ const db = require('./db');
       });
     }));
 
+  evtStream(contracts.coinCowCore.Birth)
+    .pipe(cs.object.each(async evt => {
+      const { blockNumber, args } = evt;
+      const { owner, tokenId } = args;
+
+      updateBlockNumber(blockNumber);
+
+      await db.models.cow.update(
+        { owner },
+        {
+          where: {
+            id: tokenId.toNumber(),
+            owner: { [db.sequelize.Op.eq]: null }
+          }
+        }
+      );
+    }));
+
+  evtStream(contracts.coinCowCore.Transfer)
+    .pipe(cs.object.each(async evt => {
+      const { blockNumber, args } = evt;
+      const { to, tokenId } = args;
+
+      updateBlockNumber(blockNumber);
+
+      if (to !== contracts.auctionHouse.address)
+        await db.models.cow.upsert({ id: tokenId.toNumber(), owner: to });
+    }));
+
+  for (const cowContract of [contracts.ethSwapCow, contracts.btcSwapCow]) {
+    const contractUnit = await cowContract.contractUnit();
+    const profitUnit = await cowContract.profitUnit();
+
+    evtStream(cowContract.CowCreated)
+      .pipe(cs.object.each(async evt => {
+        const { blockNumber, args } = evt;
+        const { tokenId } = args;
+
+        updateBlockNumber(blockNumber);
+
+        const [contractSize, , , startTime, endTime] = await cowContract.getCowInfo(tokenId);
+        await db.models.cow.upsert({
+          id: tokenId.toNumber(),
+          contract: cowContract.address,
+          contractSize: contractSize.toNumber(),
+          contractUnit,
+          profitUnit,
+          startTime: new Date(startTime.toNumber() * 1000),
+          endTime: new Date(endTime.toNumber() * 1000)
+        });
+      }));
+  }
+
   const f = await db.models.farm.count({
     attributes: ['id', 'name', 'owner'],
     include: [db.models.userFarm],
-    group: ['userFarms.farm_id']
+    group: ['id']
   });
 
   console.log(f);
