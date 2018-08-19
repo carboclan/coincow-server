@@ -170,12 +170,4 @@ const { Op } = db.sequelize;
         });
       }));
   }
-
-  const f = await db.models.farm.count({
-    attributes: ['id', 'name', 'owner'],
-    include: [db.models.userFarm],
-    group: ['id']
-  });
-
-  console.log(f);
 })().catch(console.error);

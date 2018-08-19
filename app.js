@@ -20,4 +20,7 @@ files.forEach(f => {
   }
 });
 
-app.listen(3000);
+require('./src/db').init().then(() => {
+  console.log('App is listening on 3000.');
+  app.listen(3000);
+});

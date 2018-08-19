@@ -18,11 +18,12 @@ module.exports = {
   models: _.fromPairs(models),
   async init() {
     if (!ready) {
-      const { farm, userFarm } = this.models;
+      const { userInfo, farm, userFarm } = this.models;
 
       await sequelize.authenticate();
       await sequelize.sync();
 
+      userInfo.hasOne(userFarm, { foreignKey: 'user_address' });
       farm.hasMany(userFarm, { foreignKey: 'farm_id' });
       ready = true;
     }
