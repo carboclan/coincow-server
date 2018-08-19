@@ -6,3 +6,11 @@ Api for coincow
 *offset: default 0*  
 *limit: default 10*
 
+/farm/list
+
+/farm/query  
+*farmId*
+
+/cow/list  
+*farmId*  
+*onAuction*
