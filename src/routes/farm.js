@@ -4,7 +4,7 @@ module.exports = {
   get: {
     async list(ctx) {
       const result = await db.models.farm.findAll({
-        attributes: ['id', 'name', 'owner', 'userInfo.name', [db.sequelize.fn('COUNT', db.sequelize.col('id')), 'count']],
+        attributes: ['id', 'name', 'owner', [db.sequelize.fn('COUNT', db.sequelize.col('id')), 'count']],
         include: [
           {
             model: db.models.userInfo,
