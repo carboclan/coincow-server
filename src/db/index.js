@@ -25,6 +25,7 @@ module.exports = {
 
       userInfo.hasOne(userFarm, { foreignKey: 'user_address' });
       cow.belongsTo(userInfo, { foreignKey: 'owner' });
+      farm.belongsTo(userInfo, { foreignKey: 'owner' });
       farm.hasMany(userFarm, { foreignKey: 'farm_id' });
       ready = true;
     }
