@@ -15,7 +15,7 @@ module.exports = {
             'address': { [Op.ne]: null }
           }
         }],
-        limit: Math.min(100, limit || 10),
+        limit: Math.min(100, limit || 100),
         offset
       };
 

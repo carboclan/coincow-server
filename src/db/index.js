@@ -28,6 +28,13 @@ module.exports = {
       farm.belongsTo(userInfo, { foreignKey: 'owner' });
       farm.hasMany(userFarm, { foreignKey: 'farm_id' });
       ready = true;
+
+      const { web3, contracts } = require('../eth');
+      await userInfo.upsert({
+        address: contracts.auctionHouse.address,
+        name: 'auction house',
+        nameHex: web3.fromUtf8('auction house')
+      });
     }
   }
 };

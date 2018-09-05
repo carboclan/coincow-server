@@ -95,8 +95,8 @@ const { Op } = db.sequelize;
 
       updateBlockNumber(blockNumber);
 
-      if (to !== contracts.auctionHouse.address)
-        await db.models.cow.upsert({ id: tokenId.toNumber(), owner: to });
+      //if (to !== contracts.auctionHouse.address)
+      await db.models.cow.upsert({ id: tokenId.toNumber(), owner: to });
     }));
 
   evtStream(contracts.auctionHouse.AuctionCreated)
